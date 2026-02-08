@@ -65,3 +65,4 @@ coverage/
 supabase/functions/.env
 
 supabase/functions/.env*
+.vercel

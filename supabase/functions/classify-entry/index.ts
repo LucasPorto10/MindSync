@@ -1,5 +1,5 @@
 // @ts-ignore - Deno global types are provided by Supabase Edge Runtime
-import "@supabase/functions-js/edge-runtime.d.ts"
+// import "@supabase/functions-js/edge-runtime.d.ts"
 // @ts-ignore - Deno npm: specifier
 import { GoogleGenAI } from "npm:@google/genai@^1.0.0"
 
@@ -65,15 +65,10 @@ OUTPUT FORMAT:
 Text: "${content}"
 `
 
-        // Call the Gemini 3 Flash API using the official SDK syntax with thinking enabled
+        // Call the Gemini API. Using gemini-2.5-flash
         const response = await ai.models.generateContent({
-            model: 'gemini-3-flash-preview',
+            model: 'gemini-2.5-flash',
             contents: prompt,
-            config: {
-                thinkingConfig: {
-                    thinkingLevel: 'medium', // Fast response for classification tasks
-                },
-            },
         })
 
         const textResponse = response.text
@@ -87,9 +82,16 @@ Text: "${content}"
         })
 
     } catch (error) {
-        console.error("Gemini 3 SDK Error:", error)
+        console.error("Gemini SDK Error:", error)
+        // Log stack trace if available
+        if (error instanceof Error && error.stack) {
+            console.error(error.stack);
+        }
+        
         const message = error instanceof Error ? error.message : 'Unknown error'
-        return new Response(JSON.stringify({ error: message }), {
+        const errorDetails = error instanceof Error ? { message: error.message, stack: error.stack, name: error.name } : { message: String(error) };
+
+        return new Response(JSON.stringify({ error: message, details: errorDetails }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 400,
         })
