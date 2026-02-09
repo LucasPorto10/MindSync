@@ -13,6 +13,8 @@ import { CalendarView } from '@/components/views/CalendarView'
 import { useAuth } from '@/providers/auth-provider'
 import Settings from '@/pages/Settings'
 import Goals from '@/pages/Goals'
+import LandingPage from '@/pages/LandingPage'
+import { LandingRedirect } from '@/components/shared/LandingRedirect'
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     const { user, loading } = useAuth()
@@ -28,14 +30,14 @@ function App() {
     return (
         <Router>
             <Routes>
+                <Route path="/" element={<LandingRedirect><LandingPage /></LandingRedirect>} />
                 <Route path="/auth" element={<AuthPage />} />
 
-                <Route path="/" element={
+                <Route element={
                     <ProtectedRoute>
                         <Shell />
                     </ProtectedRoute>
                 }>
-                    <Route index element={<Navigate to="/dashboard" replace />} />
                     <Route path="dashboard" element={<Home />} />
                     <Route path="home" element={<TaskView categorySlug="home" />} />
                     <Route path="work" element={<CardView categorySlug="work" title="Trabalho" />} />
